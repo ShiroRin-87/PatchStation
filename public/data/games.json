@@ -5,7 +5,7 @@
     "titleJa": "サクラノ詩",
     "brand": "枕",
     "releaseDate": "2015-10-23",
-    "cover": "https://picsum.photos/seed/sakura/400/560",
+    "cover": "https://picsum.photos/seed/sakura/640/360",
     "tags": ["汉化", "全年龄", "剧情"],
     "description": "以绘画与美学为主题的青春群像剧，讲述了主人公草薙直哉与身边人们的成长故事。",
     "patches": [
@@ -28,7 +28,7 @@
     "titleJa": "WHITE ALBUM2",
     "brand": "Leaf",
     "releaseDate": "2011-12-22",
-    "cover": "https://picsum.photos/seed/wa2/400/560",
+    "cover": "https://picsum.photos/seed/wa2/640/360",
     "tags": ["汉化", "R18", "恋爱", "虐心"],
     "description": "以校园为舞台的恋爱故事，围绕着轻音乐同好会的少年少女们展开的三角关系。",
     "patches": [
@@ -62,7 +62,7 @@
     "titleJa": "素晴らしき日々",
     "brand": "ケロQ",
     "releaseDate": "2010-03-26",
-    "cover": "https://picsum.photos/seed/subahibi/400/560",
+    "cover": "https://picsum.photos/seed/subahibi/640/360",
     "tags": ["汉化", "电波", "哲学", "R18"],
     "description": "七个章节组成的群像剧，讲述了\"世界终焉\"前后的故事，充满哲学思辨与电波元素。",
     "patches": [
@@ -85,7 +85,7 @@
     "titleJa": "マブラヴ オルタネイティヴ",
     "brand": "âge",
     "releaseDate": "2006-02-24",
-    "cover": "https://picsum.photos/seed/muvluv/400/560",
+    "cover": "https://picsum.photos/seed/muvluv/640/360",
     "tags": ["汉化", "机甲", "科幻", "全年龄", "泣系"],
     "description": "在平行世界中，人类与外星生物BETA进行绝望战争的科幻史诗。",
     "patches": [
@@ -108,7 +108,7 @@
     "titleJa": "Fate/stay night",
     "brand": "TYPE-MOON",
     "releaseDate": "2004-01-30",
-    "cover": "https://picsum.photos/seed/fate/400/560",
+    "cover": "https://picsum.photos/seed/fate/640/360",
     "tags": ["汉化", "战斗", "奇幻", "R18"],
     "description": "圣杯战争——七位魔术师与七位英灵围绕万能许愿机展开的死斗。",
     "patches": [
@@ -131,7 +131,7 @@
     "titleJa": "月姫 -A piece of blue glass moon-",
     "brand": "TYPE-MOON",
     "releaseDate": "2021-08-26",
-    "cover": "https://picsum.photos/seed/tsukihime/400/560",
+    "cover": "https://picsum.photos/seed/tsukihime/640/360",
     "tags": ["NS", "全年龄", "战斗", "未汉化"],
     "description": "月姬重制版，讲述远野志贵与吸血鬼爱尔奎特的相遇与命运。",
     "patches": []

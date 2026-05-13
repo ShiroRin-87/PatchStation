@@ -229,7 +229,7 @@ img {
 
 .card-cover {
   position: relative;
-  aspect-ratio: 5 / 7;
+  aspect-ratio: 16 / 9;
   overflow: hidden;
   background: var(--bg-secondary);
 }
