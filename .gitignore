@@ -1,2 +1,4 @@
 node_modules/
 dist/
+public/data/games.json
+public/data/index.json
