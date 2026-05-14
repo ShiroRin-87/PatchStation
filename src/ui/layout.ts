@@ -3,7 +3,7 @@ export function renderLayout(content: string): string {
     <header class="site-header">
       <div class="header-inner">
         <a href="#" class="logo" data-link>
-          <span class="logo-icon">&#x2726;</span>
+          <span class="logo-icon">&#x1F338;</span>
           <span class="logo-text">百合Galgame 补丁站</span>
         </a>
         <nav class="nav-links">
