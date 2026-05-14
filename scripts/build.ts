@@ -59,7 +59,6 @@ interface VndbVnResult {
   released?: string;
   developers?: { name: string }[];
   image?: { url: string; sexual?: number };
-  tags?: { name: string }[];
 }
 
 interface CacheEntry {
@@ -112,24 +111,20 @@ async function fetchVndb(vndbId: string): Promise<VndbVnResult> {
   return json.results[0] as VndbVnResult;
 }
 
-function vndbToGame(gameId: string, vn: VndbVnResult): Pick<Game, "title" | "titleJa" | "brand" | "releaseDate" | "cover" | "description" | "tags"> {
-  const titleJa = vn.title ?? "";
-  const title = stripJapanese(titleJa) || vn.alttitle || titleJa;
+// VNDB alttitle = Japanese/original name, title = romaji/English
+// Default to Japanese name; user overrides with Chinese via overrides.title
+function vndbToGame(vn: VndbVnResult): Pick<Game, "title" | "titleJa" | "brand" | "releaseDate" | "cover" | "description" | "tags"> {
+  const titleJa = vn.alttitle || vn.title || "";
 
   return {
-    title,
-    titleJa: titleJa !== title ? titleJa : "",
+    title: titleJa,
+    titleJa: titleJa,
     brand: vn.developers?.[0]?.name ?? "",
     releaseDate: vn.released ?? "",
     cover: vn.image?.url && !vn.image.sexual ? vn.image.url : PLACEHOLDER_COVER,
     description: vn.description ? truncate(vn.description.replace(/[\r\n]+/g, " "), 200) : "",
     tags: [],
   };
-}
-
-function stripJapanese(text: string): string {
-  const noJp = text.replace(/[　-〿぀-ゟ゠-ヿ＀-ﾟ一-龯]/g, "").trim();
-  return noJp.replace(/^[-\s—–]+|[-\s—–]+$/g, "").trim();
 }
 
 // ── Patch Scanning ──────────────────────────────────────
@@ -145,7 +140,7 @@ function scanPatches(gameId: string): Patch[] {
     if (!file.endsWith(".zip")) continue;
 
     const base = file.slice(0, -4);
-    const jsonFile = `${base}.json`;
+    const jsonFile = base + ".json";
     const meta: PatchMeta = loadPatchMeta(path.join(dir, jsonFile));
 
     const stats = fs.statSync(path.join(dir, file));
@@ -199,7 +194,7 @@ function buildSearchIndex(games: Game[]): void {
   });
 
   fs.writeFileSync(OUTPUT_INDEX, JSON.stringify(idx));
-  console.log(`  Index: ${games.length} games indexed`);
+  console.log("  Index: " + games.length + " games indexed");
 }
 
 // ── Main ────────────────────────────────────────────────
@@ -209,10 +204,11 @@ async function main() {
 
   // 1. Read source
   const source: SourceGame[] = JSON.parse(fs.readFileSync(SOURCE_PATH, "utf-8"));
-  console.log(`  Source: ${source.length} games in games.json`);
+  console.log("  Source: " + source.length + " games in games.json");
 
   // 2. Read cache
-  const cache: VndbCache = JSON.parse(fs.readFileSync(CACHE_PATH, "utf-8"));
+  let cache: VndbCache = {};
+  try { cache = JSON.parse(fs.readFileSync(CACHE_PATH, "utf-8")); } catch { /* first run */ }
   let cacheUpdated = false;
 
   // 3. Build full game data
@@ -220,7 +216,7 @@ async function main() {
   const now = Date.now();
 
   for (const src of source) {
-    console.log(`\n  [${src.id}]`);
+    console.log("\n  [" + src.id + "]");
 
     // Resolve VNDB data
     let vnData: VndbVnResult | null = null;
@@ -230,36 +226,30 @@ async function main() {
       const cachedAge = cached ? now - new Date(cached.fetchedAt).getTime() : Infinity;
 
       if (cached && cachedAge < CACHE_TTL_MS) {
-        console.log(`    VNDB: cache hit (${(cachedAge / 3600000).toFixed(1)}h old)`);
+        console.log("    VNDB: cache hit (" + (cachedAge / 3600000).toFixed(1) + "h old)");
         vnData = cached.data;
       } else {
         try {
-          console.log(`    VNDB: fetching ${src.vndbId}...`);
+          console.log("    VNDB: fetching " + src.vndbId + "...");
           vnData = await fetchVndb(src.vndbId);
-          cache[src.vndbId] = {
-            fetchedAt: new Date().toISOString(),
-            data: vnData,
-          };
+          cache[src.vndbId] = { fetchedAt: new Date().toISOString(), data: vnData };
           cacheUpdated = true;
-          console.log(`    VNDB: fetched OK`);
+          console.log("    VNDB: fetched OK");
         } catch (err) {
-          console.warn(`    VNDB: failed - ${err}`);
-          if (cached) {
-            console.warn(`    VNDB: using stale cache`);
-            vnData = cached.data;
-          }
+          console.warn("    VNDB: failed - " + err);
+          if (cached) { console.warn("    VNDB: using stale cache"); vnData = cached.data; }
         }
       }
     }
 
     // Build game from VNDB data
-    const vndbGame = vnData ? vndbToGame(src.id, vnData) : ({} as ReturnType<typeof vndbToGame>);
+    const vndbGame = vnData ? vndbToGame(vnData) : ({} as ReturnType<typeof vndbToGame>);
 
     // Scan patches
     const patches = scanPatches(src.id);
-    console.log(`    Patches: ${patches.length} found`);
+    console.log("    Patches: " + patches.length + " found");
 
-    // Merge overrides
+    // Merge overrides (user's Chinese title overrides the Japanese default)
     const ov = src.overrides;
     const title = ov?.title || vndbGame.title || src.id;
     const titleJa = ov?.titleJa || vndbGame.titleJa || "";
@@ -281,7 +271,7 @@ async function main() {
   // 4. Write output
   fs.mkdirSync(path.dirname(OUTPUT_GAMES), { recursive: true });
   fs.writeFileSync(OUTPUT_GAMES, JSON.stringify(games, null, 2));
-  console.log(`\n  Output: ${OUTPUT_GAMES}`);
+  console.log("\n  Output: " + OUTPUT_GAMES);
 
   // 5. Build search index
   buildSearchIndex(games);
@@ -289,7 +279,7 @@ async function main() {
   // 6. Save cache
   if (cacheUpdated) {
     fs.writeFileSync(CACHE_PATH, JSON.stringify(cache, null, 2));
-    console.log(`  Cache: updated`);
+    console.log("  Cache: updated");
   }
 
   console.log("\nDone!");
