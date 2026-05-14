@@ -170,6 +170,26 @@ function loadPatchMeta(jsonPath: string): PatchMeta {
   }
 }
 
+// ── CJK Bigram ──────────────────────────────────────────
+
+function isCJK(ch: string): boolean {
+  const cp = ch.codePointAt(0)!;
+  return (cp >= 0x4E00 && cp <= 0x9FFF)  // CJK Unified
+      || (cp >= 0x3040 && cp <= 0x30FF)  // Hiragana + Katakana
+      || (cp >= 0x3400 && cp <= 0x4DBF); // CJK Extension A
+}
+
+function bigramCJK(text: string): string {
+  const chars = [...text];
+  const bigrams: string[] = [];
+  for (let i = 0; i < chars.length - 1; i++) {
+    if (isCJK(chars[i]) && isCJK(chars[i + 1])) {
+      bigrams.push(chars[i] + chars[i + 1]);
+    }
+  }
+  return bigrams.join(" ");
+}
+
 // ── Build Index ─────────────────────────────────────────
 
 function buildSearchIndex(games: Game[]): void {
@@ -180,6 +200,10 @@ function buildSearchIndex(games: Game[]): void {
     this.field("brand");
     this.field("tags");
     this.field("description");
+    this.field("cjk");
+
+    this.pipeline.remove(lunr.stemmer);
+    this.pipeline.remove(lunr.stopWordFilter);
 
     for (const game of games) {
       this.add({
@@ -189,6 +213,7 @@ function buildSearchIndex(games: Game[]): void {
         brand: game.brand,
         tags: game.tags.join(" "),
         description: game.description,
+        cjk: bigramCJK(game.title + " " + game.titleJa + " " + game.brand),
       });
     }
   });
