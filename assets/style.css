@@ -300,6 +300,17 @@ img {
   border: 1px solid var(--border);
 }
 
+.tag-clickable {
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.tag-clickable:hover {
+  border-color: var(--accent);
+  color: var(--text-primary);
+  background: var(--tag-active-bg);
+}
+
 /* ===== Detail Page ===== */
 .back-link {
   display: inline-block;

@@ -17,7 +17,7 @@ export function renderGameCard(game: Game): string {
         <h3 class="card-title">${game.title}</h3>
         ${game.titleJa ? `<p class="card-title-ja">${game.titleJa}</p>` : ""}
         <p class="card-brand">${game.brand}</p>
-        <div class="card-tags">${renderTags(game.tags)}</div>
+        <div class="card-tags">${renderTags(game.tags, true)}</div>
       </div>
     </a>
   `;

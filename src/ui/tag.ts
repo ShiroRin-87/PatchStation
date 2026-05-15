@@ -1,4 +1,7 @@
-export function renderTags(tags: string[]): string {
+export function renderTags(tags: string[], clickable = false): string {
+  if (clickable) {
+    return tags.map((t) => `<button class="tag tag-${slugify(t)} tag-clickable" data-tag="${t}">${t}</button>`).join("");
+  }
   return tags.map((t) => `<span class="tag tag-${slugify(t)}">${t}</span>`).join("");
 }
 

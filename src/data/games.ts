@@ -80,6 +80,15 @@ function rebindCardLinks(): void {
       if (href) navigateTo(href);
     });
   });
+
+  document.querySelectorAll(".tag-clickable").forEach((tag) => {
+    tag.addEventListener("click", (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      const t = (tag as HTMLElement).dataset.tag!;
+      handleTagClick(t);
+    });
+  });
 }
 
 function rebindTagButtons(): void {
