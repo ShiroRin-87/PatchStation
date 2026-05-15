@@ -1,5 +1,5 @@
 import { renderLayout } from "./ui/layout";
-import { renderGamesPage, handleTagClick, handleSearch } from "./data/games";
+import { renderGamesPage, handleTagClick, handleSearch, handleToggleR18 } from "./data/games";
 import { renderDetailPage } from "./data/detail";
 
 const app = document.getElementById("app")!;
@@ -61,6 +61,11 @@ function bindEvents(route: string): void {
         handleTagClick(tag);
       });
     });
+
+    const r18Toggle = document.getElementById("r18-toggle");
+    if (r18Toggle) {
+      r18Toggle.addEventListener("click", () => handleToggleR18());
+    }
   }
 }
 
