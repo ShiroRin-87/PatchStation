@@ -2,55 +2,39 @@
   {
     "id": "sakura-no-utage",
     "vndbId": "v562",
-    "overrides": {
-      "title": "樱之诗",
-      "titleJa": "サクラノ詩",
-      "tags": ["汉化", "全年龄", "剧情"]
-    }
+    "title": "樱之诗",
+    "tags": ["汉化", "全年龄", "剧情"],
+    "overrides": { "titleJa": "サクラノ詩" }
   },
   {
     "id": "white-album-2",
     "vndbId": "v7771",
-    "overrides": {
-      "title": "白色相簿2",
-      "titleJa": "WHITE ALBUM2",
-      "tags": ["汉化", "R18", "恋爱", "虐心"]
-    }
+    "title": "白色相簿2",
+    "tags": ["汉化", "R18", "恋爱", "虐心"]
   },
   {
     "id": "subahibi",
     "vndbId": "v3144",
-    "overrides": {
-      "title": "美好的每一天",
-      "titleJa": "素晴らしき日々",
-      "tags": ["汉化", "电波", "哲学", "R18"]
-    }
+    "title": "美好的每一天",
+    "tags": ["汉化", "电波", "哲学", "R18"],
+    "overrides": { "titleJa": "素晴らしき日々" }
   },
   {
     "id": "muvluv-alt",
     "vndbId": "v92",
-    "overrides": {
-      "title": "Muv-Luv Alternative",
-      "titleJa": "マブラヴ オルタネイティヴ",
-      "tags": ["汉化", "机甲", "科幻", "全年龄", "泣系"]
-    }
+    "title": "Muv-Luv Alternative",
+    "tags": ["汉化", "机甲", "科幻", "全年龄", "泣系"]
   },
   {
     "id": "fate-stay-night",
     "vndbId": "v11",
-    "overrides": {
-      "title": "Fate/stay night",
-      "titleJa": "Fate/stay night",
-      "tags": ["汉化", "战斗", "奇幻", "R18"]
-    }
+    "title": "Fate/stay night",
+    "tags": ["汉化", "战斗", "奇幻", "R18"]
   },
   {
     "id": "tsukihime-re",
     "vndbId": "v17909",
-    "overrides": {
-      "title": "月姬 -A piece of blue glass moon-",
-      "titleJa": "月姫 -A piece of blue glass moon-",
-      "tags": ["NS", "全年龄", "战斗", "未汉化"]
-    }
+    "title": "月姬 -A piece of blue glass moon-",
+    "tags": ["NS", "全年龄", "战斗", "未汉化"]
   }
 ]

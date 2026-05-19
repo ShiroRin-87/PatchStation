@@ -9,8 +9,10 @@ const root = path.resolve(__dirname, "..");
 // ── Types ──────────────────────────────────────────────
 
 interface SourceGame {
-  id: string;
-  vndbId?: string;
+  id?: string;
+  vndbId: string;
+  title?: string;
+  tags?: string[];
   overrides?: {
     title?: string;
     titleJa?: string;
@@ -49,6 +51,7 @@ interface Game {
   tags: string[];
   description: string;
   patches: Patch[];
+  nsfw: boolean;
 }
 
 interface VndbVnResult {
@@ -113,7 +116,7 @@ async function fetchVndb(vndbId: string): Promise<VndbVnResult> {
 
 // VNDB alttitle = Japanese/original name, title = romaji/English
 // Default to Japanese name; user overrides with Chinese via overrides.title
-function vndbToGame(vn: VndbVnResult): Pick<Game, "title" | "titleJa" | "brand" | "releaseDate" | "cover" | "description" | "tags"> {
+function vndbToGame(vn: VndbVnResult): Pick<Game, "title" | "titleJa" | "brand" | "releaseDate" | "cover" | "description" | "tags" | "nsfw"> {
   const titleJa = vn.alttitle || vn.title || "";
 
   return {
@@ -124,6 +127,7 @@ function vndbToGame(vn: VndbVnResult): Pick<Game, "title" | "titleJa" | "brand" 
     cover: vn.image?.url && !vn.image.sexual ? vn.image.url : PLACEHOLDER_COVER,
     description: vn.description ? truncate(vn.description.replace(/[\r\n]+/g, " "), 200) : "",
     tags: [],
+    nsfw: (vn.image?.sexual ?? 0) >= 1,
   };
 }
 
@@ -241,7 +245,8 @@ async function main() {
   const now = Date.now();
 
   for (const src of source) {
-    console.log("\n  [" + src.id + "]");
+    const gameId = src.id || src.vndbId;
+    console.log("\n  [" + gameId + "]");
 
     // Resolve VNDB data
     let vnData: VndbVnResult | null = null;
@@ -271,17 +276,19 @@ async function main() {
     const vndbGame = vnData ? vndbToGame(vnData) : ({} as ReturnType<typeof vndbToGame>);
 
     // Scan patches
-    const patches = scanPatches(src.id);
+    const patches = scanPatches(gameId);
     console.log("    Patches: " + patches.length + " found");
 
-    // Merge overrides (user's Chinese title overrides the Japanese default)
+    // Title: user's top-level title > overrides.title > VNDB alttitle > gameId
     const ov = src.overrides;
-    const title = ov?.title || vndbGame.title || src.id;
+    const title = src.title || ov?.title || vndbGame.title || gameId;
     const titleJa = ov?.titleJa || vndbGame.titleJa || "";
-    const tags = ov?.tags ?? [];
+    const tags = src.tags || (ov?.tags ?? []);
+
+    const nsfw = vndbGame.nsfw || tags.some((t) => /r18|18禁|nsfw/i.test(t));
 
     games.push({
-      id: src.id,
+      id: gameId,
       title,
       titleJa,
       brand: vndbGame.brand || "",
@@ -290,6 +297,7 @@ async function main() {
       description: vndbGame.description || "",
       tags,
       patches,
+      nsfw,
     });
   }
 
