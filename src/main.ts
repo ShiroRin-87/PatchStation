@@ -1,11 +1,11 @@
 import { renderLayout } from "./ui/layout";
-import { renderGamesPage, handleTagClick, handleSearch } from "./data/games";
+import { renderGamesPage, handleTagClick, handleSearch, handleNsfwToggle } from "./data/games";
 import { renderDetailPage } from "./data/detail";
 
 const app = document.getElementById("app")!;
 
 function parseHash(): { route: string; params: Record<string, string> } {
-  const hash = window.location.hash.slice(1) || "/";
+  const hash = decodeURIComponent(window.location.hash.slice(1)) || "/";
   if (hash.startsWith("/game/")) {
     return { route: "/game/:id", params: { id: hash.slice(6) } };
   }
@@ -51,6 +51,14 @@ function bindEvents(route: string): void {
     searchBtn.addEventListener("click", () => {
       if (searchInput) handleSearch(searchInput.value.trim());
     });
+  }
+
+  // NSFW toggle (only on games page)
+  if (route === "/") {
+    const nsfwToggle = document.getElementById("nsfw-toggle");
+    if (nsfwToggle) {
+      nsfwToggle.addEventListener("click", handleNsfwToggle);
+    }
   }
 
   // Tag buttons (only on games page)

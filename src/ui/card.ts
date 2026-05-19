@@ -6,7 +6,7 @@ export function renderGameCard(game: Game): string {
   const countLabel = patchCount > 0 ? `${patchCount} 个补丁` : "暂无补丁";
 
   return `
-    <a href="#/game/${game.id}" class="game-card" data-link>
+    <a href="#/game/${encodeURIComponent(game.id)}" class="game-card" data-link>
       <div class="card-cover">
         <img src="${game.cover}" alt="${game.title}" loading="lazy" />
         <div class="card-cover-overlay">
