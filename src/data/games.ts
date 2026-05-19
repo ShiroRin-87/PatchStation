@@ -6,6 +6,23 @@ import { renderTagFilter } from "../ui/tag";
 let allGames: Game[] = [];
 let activeTags = new Set<string>();
 let currentQuery = "";
+let hideNsfw = loadNsfwPref();
+
+function loadNsfwPref(): boolean {
+  try {
+    return localStorage.getItem("hideNsfw") === "true";
+  } catch {
+    return false;
+  }
+}
+
+function saveNsfwPref(hide: boolean): void {
+  try {
+    localStorage.setItem("hideNsfw", String(hide));
+  } catch {
+    // localStorage unavailable
+  }
+}
 
 export async function renderGamesPage(): Promise<string> {
   allGames = await loadGames();
@@ -17,6 +34,12 @@ export async function renderGamesPage(): Promise<string> {
         <div class="search-box">
           <input type="text" id="search-input" placeholder="搜索游戏名称、社团..." value="${escapeHtml(currentQuery)}" autocomplete="off" />
           <button id="search-btn" class="search-btn">&#x1F50D;</button>
+        </div>
+        <div class="nsfw-filter">
+          <button id="nsfw-toggle" class="nsfw-toggle ${hideNsfw ? "active" : ""}">
+            <span class="nsfw-toggle-indicator"></span>
+          </button>
+          <span class="nsfw-label">隐藏R18</span>
         </div>
         ${renderTagFilter(allTags, activeTags)}
       </div>
@@ -40,6 +63,10 @@ async function renderFilteredGames(): Promise<string> {
     games = games.filter((g) => g.tags.some((t) => activeTags.has(t)));
   }
 
+  if (hideNsfw) {
+    games = games.filter((g) => !g.nsfw);
+  }
+
   return renderGameGrid(games);
 }
 
@@ -49,6 +76,12 @@ export async function handleTagClick(tag: string): Promise<void> {
   } else {
     activeTags.add(tag);
   }
+  await refreshGameList();
+}
+
+export async function handleNsfwToggle(): Promise<void> {
+  hideNsfw = !hideNsfw;
+  saveNsfwPref(hideNsfw);
   await refreshGameList();
 }
 
@@ -62,6 +95,11 @@ async function refreshGameList(): Promise<void> {
   if (el) {
     el.innerHTML = await renderFilteredGames();
     rebindCardLinks();
+  }
+
+  const nsfwEl = document.getElementById("nsfw-toggle");
+  if (nsfwEl) {
+    nsfwEl.classList.toggle("active", hideNsfw);
   }
 
   const allTags = getAllTags(allGames);

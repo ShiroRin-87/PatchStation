@@ -20,6 +20,7 @@ export interface Game {
   tags: string[];
   description: string;
   patches: Patch[];
+  nsfw: boolean;
 }
 
 let cachedGames: Game[] | null = null;
